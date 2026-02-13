@@ -1049,6 +1049,7 @@ Consumer reads messages:
 -----
 
 ## 7. Delivery Guarantees
+<img width="1999" height="1215" alt="image" src="https://github.com/user-attachments/assets/531e4602-4bd4-43b7-a874-d338099d7dcc" />
 
 ### 7.1 At-Most-Once Delivery
 
