@@ -1,49 +1,55 @@
-PYTHON MASTERY: BASICS TO ADVANCED
-Complete Interview Preparation Guide
-TABLE OF CONTENTS
-Python Fundamentals
-Data Types & Structures Deep Dive
-Tricky Concepts (Mutability, Copying, etc.)
-Functions & Decorators
-OOP (Object-Oriented Programming)
-Advanced Topics
-Tricky Interview Questions
-Common Pitfalls & Gotchas
-1. PYTHON FUNDAMENTALS
-1.1 Variables & Memory Management
-How Python Stores Variables
+# PYTHON MASTERY: BASICS TO ADVANCED
+## Complete Interview Preparation Guide
+
+---
+
+## TABLE OF CONTENTS
+
+1. Python Fundamentals
+2. Data Types & Structures Deep Dive
+3. Tricky Concepts (Mutability, Copying, etc.)
+4. Functions & Decorators
+5. OOP (Object-Oriented Programming)
+6. Advanced Topics
+7. Tricky Interview Questions
+8. Common Pitfalls & Gotchas
+
+---
+
+# 1. PYTHON FUNDAMENTALS
+
+## 1.1 Variables & Memory Management
+
+### How Python Stores Variables
+
+```python
 # Python uses reference semantics
 a = 10
 b = a  # b points to same object as a
 
 print(id(a))  # Memory address
 print(id(b))  # Same memory address!
-# `id()` in Python — Complete Explanation (Interview Ready)
+```
 
----
-
-# 1. What is `id()`?
+### What is `id()`?
 
 `id(obj)` returns the **identity** of an object.
 
-In **CPython**, this identity is:
-> The memory address where the object is stored.
+In **CPython**, this identity is the memory address where the object is stored.
 
-Important:
-- Identity is guaranteed to be **unique during the object’s lifetime**.
-- After an object is garbage collected, that ID may be reused.
+**Important:**
+- Identity is guaranteed to be **unique during the object's lifetime**
+- After an object is garbage collected, that ID may be reused
 
----
+### Identity vs Equality
 
-# 2. Identity vs Equality
+| Concept | Operator | Meaning |
+|---------|----------|---------|
+| Value equality | `==` | Compares values |
+| Identity | `is` | Compares object identity |
+| Get identity | `id()` | Returns memory address |
 
-| Concept | Meaning |
-|----------|----------|
-| `==` | Value equality |
-| `is` | Identity comparison |
-| `id()` | Returns object identity |
-
-Example:
+**Example:**
 
 ```python
 a = [1]
@@ -61,7 +67,11 @@ print(list1)  # [1, 2, 3, 4] - MODIFIED!
 
 # Interview Question: Why?
 # Answer: Lists are mutable. list2 is a reference, not a copy.
-Small Integer Caching
+```
+
+### Small Integer Caching
+
+```python
 # Python caches small integers (-5 to 256)
 a = 10
 b = 10
@@ -83,8 +93,15 @@ b = 257
 print(a is b)  # False (in most cases)
 
 # Why? Python caches integers from -5 to 256 for optimization
-1.2 Data Types Deep Dive
-Immutable vs Mutable
+```
+
+---
+
+## 1.2 Data Types Deep Dive
+
+### Immutable vs Mutable
+
+```python
 # IMMUTABLE: int, float, str, tuple, frozenset, bool
 # Once created, cannot be changed
 
@@ -118,9 +135,17 @@ def add_item_correct(lst=None):
         lst = []
     lst.append(1)
     return lst
-2. TRICKY CONCEPTS - DEEP DIVE
-2.1 Shallow Copy vs Deep Copy
-The Problem
+```
+
+---
+
+# 2. TRICKY CONCEPTS - DEEP DIVE
+
+## 2.1 Shallow Copy vs Deep Copy
+
+### The Problem
+
+```python
 import copy
 
 # Original list with nested structure
@@ -148,29 +173,40 @@ deep = copy.deepcopy(original)
 deep[2].append(100)
 print(original)  # [1, 2, [3, 4, 99], 5, 6] - NOT affected
 print(deep)      # [1, 2, [3, 4, 99, 100], 5, 6, 7] - Only this changes
-Visual Explanation
-# Shallow Copy:
+```
+
+### Visual Explanation
+
+```
+Shallow Copy:
 original = [[1, 2], [3, 4]]
 shallow = original.copy()
 
-# Memory layout:
-# original -> [ref1, ref2]
-# shallow  -> [ref1, ref2]  (same references!)
-#              â†“     â†“
-#            [1,2] [3,4]
+Memory layout:
+original -> [ref1, ref2]
+shallow  -> [ref1, ref2]  (same references!)
+             |     |
+             v     v
+           [1,2] [3,4]
 
-# Deep Copy:
+Deep Copy:
 deep = copy.deepcopy(original)
 
-# Memory layout:
-# original -> [ref1, ref2]
-#              â†“     â†“
-#            [1,2] [3,4]
-#
-# deep     -> [ref3, ref4]
-#              â†“     â†“
-#            [1,2] [3,4]  (completely separate!)
-Interview Questions on Copying
+Memory layout:
+original -> [ref1, ref2]
+             |     |
+             v     v
+           [1,2] [3,4]
+
+deep     -> [ref3, ref4]
+             |     |
+             v     v
+           [1,2] [3,4]  (completely separate!)
+```
+
+### Interview Questions on Copying
+
+```python
 # Q1: What will this print?
 a = [1, 2, 3]
 b = a
@@ -202,8 +238,15 @@ print(t1)  # ([1, 2, 99], 3)
 print(t2)  # ([1, 2, 99], 3) - reference
 print(t3)  # ([1, 2, 99], 3) - shallow copy, list is referenced!
 print(t4)  # ([1, 2], 3) - deep copy, completely separate
-2.2 Tuples - Immutable But Tricky!
-Understanding Tuple Immutability
+```
+
+---
+
+## 2.2 Tuples - Immutable But Tricky!
+
+### Understanding Tuple Immutability
+
+```python
 # Tuples are immutable - you cannot change the tuple itself
 t = (1, 2, 3)
 # t[0] = 10  # TypeError: 'tuple' object does not support item assignment
@@ -218,7 +261,8 @@ print(t)  # ([1, 2, 99], 3)
 
 # Visual:
 # t -> (ref_to_list, 3)
-#       â†“
+#       |
+#       v
 #      [1, 2]  <- This can change
 #
 # The reference (ref_to_list) cannot change, but the list it points to can!
@@ -229,7 +273,11 @@ t = (1, 2, 3)
 # Answer: No, but you can create a new tuple
 t = t + (4,)  # Creates NEW tuple
 print(t)  # (1, 2, 3, 4)
-Tuple vs List - When to Use What?
+```
+
+### Tuple vs List - When to Use What?
+
+```python
 # Use Tuple When:
 # 1. Data should not change
 coordinates = (10.5, 20.3)  # x, y coordinates
@@ -254,7 +302,11 @@ shopping_list = ["milk", "eggs"]
 shopping_list.append("bread")
 
 # 2. Need list methods (append, remove, etc.)
-Tricky Tuple Questions
+```
+
+### Tricky Tuple Questions
+
+```python
 # Q1: Single element tuple
 t1 = (1)      # This is an int!
 t2 = (1,)     # This is a tuple
@@ -276,8 +328,15 @@ t = ([1, 2],)
 # Can we hash this tuple? (for use as dict key)
 # hash(t)  # TypeError: unhashable type: 'list'
 # Tuples are only hashable if all elements are hashable
-2.3 Decorators - Complete Guide
-What is a Decorator?
+```
+
+---
+
+## 2.3 Decorators - Complete Guide
+
+### What is a Decorator?
+
+```python
 # A decorator is a function that takes a function and returns a new function
 # It "wraps" the original function to add functionality
 
@@ -301,7 +360,11 @@ say_hello()
 
 # What @ does:
 # say_hello = my_decorator(say_hello)
-Decorators with Arguments
+```
+
+### Decorators with Arguments
+
+```python
 # Problem: Decorated function takes arguments
 def my_decorator(func):
     def wrapper(*args, **kwargs):  # Accept any arguments
@@ -319,7 +382,11 @@ result = add(3, 5)
 # Output:
 # Calling add
 # Function returned: 8
-Preserving Function Metadata
+```
+
+### Preserving Function Metadata
+
+```python
 from functools import wraps
 
 # Without @wraps:
@@ -350,7 +417,11 @@ def my_function():
 
 print(my_function.__name__)  # my_function (correct!)
 print(my_function.__doc__)   # This is my function (preserved!)
-Common Decorator Patterns
+```
+
+### Common Decorator Patterns
+
+```python
 from functools import wraps
 import time
 
@@ -439,7 +510,11 @@ def expensive_computation(n):
 
 print(expensive_computation(5))  # Computes
 print(expensive_computation(5))  # Returns cached
-Decorator with Parameters
+```
+
+### Decorator with Parameters
+
+```python
 # Decorator that takes arguments
 def repeat(times):
     def decorator(func):
@@ -465,7 +540,11 @@ say_hello()
 # 1. repeat(3) returns decorator function
 # 2. decorator(say_hello) returns wrapper function
 # 3. say_hello = wrapper
-Class-Based Decorators
+```
+
+### Class-Based Decorators
+
+```python
 class CountCalls:
     def __init__(self, func):
         self.func = func
@@ -482,7 +561,11 @@ def say_hello():
 
 say_hello()  # Call 1 of say_hello
 say_hello()  # Call 2 of say_hello
-Stacking Decorators
+```
+
+### Stacking Decorators
+
+```python
 @decorator1
 @decorator2
 @decorator3
@@ -499,8 +582,15 @@ def add(a, b):
     return a + b
 
 # First logger wraps add, then timer wraps the result
-2.4 Mutability Deep Dive
-Mutable Default Arguments - The Biggest Gotcha
+```
+
+---
+
+## 2.4 Mutability Deep Dive
+
+### Mutable Default Arguments - The Biggest Gotcha
+
+```python
 # DANGEROUS!
 def append_to_list(item, my_list=[]):
     my_list.append(item)
@@ -522,7 +612,11 @@ def append_to_list_correct(item, my_list=None):
 
 print(append_to_list_correct(1))  # [1]
 print(append_to_list_correct(2))  # [2] - New list each time!
-Mutability in Loops
+```
+
+### Mutability in Loops
+
+```python
 # Problem: Creating list of functions
 functions = []
 for i in range(5):
@@ -550,7 +644,11 @@ def print_value(x):
     return x
 
 functions = [partial(print_value, i) for i in range(5)]
-Mutability in Class Attributes
+```
+
+### Mutability in Class Attributes
+
+```python
 # DANGEROUS!
 class MyClass:
     shared_list = []  # Class attribute (shared by ALL instances)
@@ -577,8 +675,15 @@ obj2 = MyClass()
 
 obj1.add_item(1)
 print(obj2.my_list)  # [] - Separate!
-2.5 Python Memory Management
-Reference Counting
+```
+
+---
+
+## 2.5 Python Memory Management
+
+### Reference Counting
+
+```python
 import sys
 
 a = [1, 2, 3]
@@ -591,7 +696,11 @@ del b  # Remove reference
 print(sys.getrefcount(a))  # 2
 
 # When refcount reaches 0, memory is freed
-Garbage Collection
+```
+
+### Garbage Collection
+
+```python
 import gc
 
 # Circular references
@@ -614,8 +723,15 @@ del node2
 
 # Force garbage collection
 gc.collect()
-2.6 Generators & Iterators
-Generators - Lazy Evaluation
+```
+
+---
+
+## 2.6 Generators & Iterators
+
+### Generators - Lazy Evaluation
+
+```python
 # Normal function - returns all at once
 def get_numbers(n):
     result = []
@@ -643,7 +759,11 @@ squares_list = [x * x for x in range(10)]  # List
 # Key difference:
 print(type(squares))  # <class 'generator'>
 print(type(squares_list))  # <class 'list'>
-Custom Iterators
+```
+
+### Custom Iterators
+
+```python
 class Countdown:
     def __init__(self, start):
         self.current = start
@@ -660,8 +780,15 @@ class Countdown:
 # Usage
 for i in Countdown(5):
     print(i)  # 5, 4, 3, 2, 1
-2.7 Context Managers
-The with Statement
+```
+
+---
+
+## 2.7 Context Managers
+
+### The with Statement
+
+```python
 # Without context manager
 file = open('file.txt', 'r')
 try:
@@ -699,8 +826,15 @@ def my_context():
 
 with my_context():
     print("Inside context")
-3. TRICKY INTERVIEW QUESTIONS
-Question 1: What's the output?
+```
+
+---
+
+# 3. TRICKY INTERVIEW QUESTIONS
+
+## Question 1: What's the output?
+
+```python
 def func(a, b=[]):
     b.append(a)
     return b
@@ -715,7 +849,11 @@ print(func(4))  # ?
 # [1, 2] - Same list!
 # [3]
 # [1, 2, 4] - Same list again!
-Question 2: What's the output?
+```
+
+## Question 2: What's the output?
+
+```python
 x = [1, 2, 3]
 y = x
 z = x[:]
@@ -728,7 +866,11 @@ print(z)  # ?
 # Answer:
 # [1, 2, 3, 4] - y is reference
 # [1, 2, 3] - z is copy
-Question 3: What's the output?
+```
+
+## Question 3: What's the output?
+
+```python
 def outer():
     x = 1
     def inner():
@@ -743,7 +885,11 @@ outer()
 # inner: 2
 # outer: 1
 # inner's x is local variable, doesn't affect outer's x
-Question 4: What's the output?
+```
+
+## Question 4: What's the output?
+
+```python
 def outer():
     x = 1
     def inner():
@@ -764,7 +910,11 @@ def outer():
         x += 1
         print(x)
     inner()
-Question 5: What's the output?
+```
+
+## Question 5: What's the output?
+
+```python
 a = [1, 2, 3]
 b = [1, 2, 3]
 
@@ -777,7 +927,11 @@ print(a is b)  # ?
 
 c = a
 print(a is c)  # True - same object
-Question 6: Closure
+```
+
+## Question 6: Closure
+
+```python
 def multiplier(n):
     def multiply(x):
         return x * n
@@ -790,7 +944,11 @@ times_5 = multiplier(5)
 print(times_5(10))  # 50
 
 # Each closure maintains its own 'n'
-Question 7: Late Binding in Loops
+```
+
+## Question 7: Late Binding in Loops
+
+```python
 funcs = []
 for i in range(5):
     funcs.append(lambda: i)
@@ -806,7 +964,11 @@ for i in range(5):
     funcs.append(lambda x=i: x)  # Bind i's VALUE
 
 print([f() for f in funcs])  # [0, 1, 2, 3, 4]
-Question 8: Multiple Inheritance - MRO
+```
+
+## Question 8: Multiple Inheritance - MRO
+
+```python
 class A:
     def method(self):
         print("A")
@@ -828,8 +990,15 @@ d.method()  # ?
 # Answer: "B"
 # MRO (Method Resolution Order): D -> B -> C -> A
 print(D.__mro__)
-4. ADVANCED TOPICS
-4.1 List Comprehensions vs Generator Expressions
+```
+
+---
+
+# 4. ADVANCED TOPICS
+
+## 4.1 List Comprehensions vs Generator Expressions
+
+```python
 # List comprehension - creates list immediately
 squares_list = [x**2 for x in range(1000000)]  # Uses lots of memory
 
@@ -848,7 +1017,11 @@ squares_dict = {x: x**2 for x in range(5)}
 
 # Set comprehension
 unique_lengths = {len(word) for word in ["hello", "world", "hi"]}
-4.2 *args and **kwargs
+```
+
+## 4.2 *args and **kwargs
+
+```python
 # *args - variable positional arguments (tuple)
 def func(*args):
     print(args)  # Tuple of arguments
@@ -883,7 +1056,11 @@ print(add(*numbers))  # Unpacks list
 
 data = {'a': 1, 'b': 2, 'c': 3}
 print(add(**data))  # Unpacks dict
-4.3 Lambda Functions
+```
+
+## 4.3 Lambda Functions
+
+```python
 # Lambda - anonymous function
 square = lambda x: x ** 2
 print(square(5))  # 25
@@ -909,7 +1086,11 @@ def square(x):
     return x ** 2
 
 # Better than lambda for complex logic
-4.4 Global, Nonlocal, Local
+```
+
+## 4.4 Global, Nonlocal, Local
+
+```python
 x = "global"
 
 def outer():
@@ -951,8 +1132,15 @@ def modify_global():
 
 modify_global()
 print(x)  # "modified"
-5. PYTHON BEST PRACTICES
-5.1 Exception Handling
+```
+
+---
+
+# 5. PYTHON BEST PRACTICES
+
+## 5.1 Exception Handling
+
+```python
 # Basic
 try:
     result = 10 / 0
@@ -990,7 +1178,11 @@ def validate_age(age):
     if age < 0:
         raise ValidationError("Age cannot be negative")
     return age
-5.2 Type Hints
+```
+
+## 5.2 Type Hints
+
+```python
 from typing import List, Dict, Optional, Union, Tuple
 
 # Basic types
@@ -1020,8 +1212,15 @@ def get_coordinates() -> Tuple[float, float]:
 
 # Type checking with mypy (static analysis)
 # Run: mypy your_file.py
-6. COMMON PITFALLS & GOTCHAS
-Pitfall 1: Modifying List While Iterating
+```
+
+---
+
+# 6. COMMON PITFALLS & GOTCHAS
+
+## Pitfall 1: Modifying List While Iterating
+
+```python
 # WRONG!
 numbers = [1, 2, 3, 4, 5]
 for num in numbers:
@@ -1039,7 +1238,11 @@ for num in numbers[:]:  # Create copy with [:]
 # BETTER: List comprehension
 numbers = [1, 2, 3, 4, 5]
 numbers = [num for num in numbers if num % 2 != 0]
-Pitfall 2: Comparing with == vs is
+```
+
+## Pitfall 2: Comparing with == vs is
+
+```python
 # is checks identity (same object)
 # == checks equality (same value)
 
@@ -1058,12 +1261,22 @@ if x is None:  # Correct
 
 if x == None:  # Works but not preferred
     pass
-Pitfall 3: String Concatenation in Loop
+```
+
+## Pitfall 3: String Concatenation in Loop
+
+```python
 # SLOW! Creates new string each time
 result = ""
 for i in range(1000):
-    result += str(i)  # O(nÂ²) complexity!
+    result += str(i)  # O(n²) complexity!
 
 # FAST! Join at end
 result = "".join(str(i) for i in range(1000))  # O(n)
-This is Part 1 of Python Mastery. Shall I continue with more advanced topics and create the FastAPI guide next?
+```
+
+---
+
+**END OF PYTHON MASTERY GUIDE**
+
+This comprehensive guide covers everything from Python fundamentals to advanced topics, with a focus on tricky interview questions and common pitfalls. Practice these concepts and you'll be well-prepared for any Python interview!
