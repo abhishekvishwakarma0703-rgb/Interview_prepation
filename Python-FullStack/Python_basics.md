@@ -138,11 +138,11 @@ def add_item_correct(lst=None):
 ```
 
 ---
-# Mutable Default Argument Bug — Short & Clear Explanation
+# Mutable Default Argument Bug --- Complete Short Explanation
 
-## The Problem
+## Problem Example
 
-```python
+``` python
 def add_item(lst=[]):
     lst.append(1)
     return lst
@@ -150,6 +150,56 @@ def add_item(lst=[]):
 print(add_item())  # [1]
 print(add_item())  # [1, 1]
 print(add_item())  # [1, 1, 1]
+```
+
+The list keeps growing across calls.
+
+------------------------------------------------------------------------
+
+## Why This Happens
+
+-   Default arguments are evaluated **once at function definition
+    time**, not at call time.
+-   The list `[]` is created only once.
+-   That same list object is reused on every function call.
+-   Since lists are mutable, each call modifies the same object.
+
+You can inspect it:
+
+``` python
+add_item.__defaults__
+```
+
+The stored list is reused every time.
+
+------------------------------------------------------------------------
+
+## Correct Solution
+
+``` python
+def add_item_correct(lst=None):
+    if lst is None:
+        lst = []
+    lst.append(1)
+    return lst
+```
+
+------------------------------------------------------------------------
+
+## Why This Fix Works
+
+-   `None` is immutable and safe to reuse.
+-   A new list is created inside the function at runtime.
+-   Each call gets a fresh list.
+-   No shared mutable state.
+
+------------------------------------------------------------------------
+
+## Interview-Ready Answer
+
+> Mutable default arguments persist across calls because they are
+> evaluated once at definition time. Using `None` ensures a new object
+> is created at runtime, preventing unintended shared state.
 
 
 # 2. TRICKY CONCEPTS - DEEP DIVE
