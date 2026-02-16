@@ -18,6 +18,40 @@ b = a  # b points to same object as a
 
 print(id(a))  # Memory address
 print(id(b))  # Same memory address!
+# `id()` in Python — Complete Explanation (Interview Ready)
+
+---
+
+# 1. What is `id()`?
+
+`id(obj)` returns the **identity** of an object.
+
+In **CPython**, this identity is:
+> The memory address where the object is stored.
+
+Important:
+- Identity is guaranteed to be **unique during the object’s lifetime**.
+- After an object is garbage collected, that ID may be reused.
+
+---
+
+# 2. Identity vs Equality
+
+| Concept | Meaning |
+|----------|----------|
+| `==` | Value equality |
+| `is` | Identity comparison |
+| `id()` | Returns object identity |
+
+Example:
+
+```python
+a = [1]
+b = [1]
+
+print(a == b)  # True (same value)
+print(a is b)  # False (different objects)
+print(id(a) == id(b))  # False
 
 # But for mutable objects...
 list1 = [1, 2, 3]
