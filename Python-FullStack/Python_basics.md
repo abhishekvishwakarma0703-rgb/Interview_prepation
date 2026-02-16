@@ -138,11 +138,12 @@ def add_item_correct(lst=None):
 ```
 
 ---
-# Mutable Default Argument Bug --- Complete Short Explanation
 
-## Problem Example
+### Mutable Default Argument Bug - Complete Short Explanation
 
-``` python
+#### Problem Example
+
+```python
 def add_item(lst=[]):
     lst.append(1)
     return lst
@@ -154,29 +155,24 @@ print(add_item())  # [1, 1, 1]
 
 The list keeps growing across calls.
 
-------------------------------------------------------------------------
+#### Why This Happens
 
-## Why This Happens
-
--   Default arguments are evaluated **once at function definition
-    time**, not at call time.
--   The list `[]` is created only once.
--   That same list object is reused on every function call.
--   Since lists are mutable, each call modifies the same object.
+- Default arguments are evaluated **once at function definition time**, not at call time
+- The list `[]` is created only once
+- That same list object is reused on every function call
+- Since lists are mutable, each call modifies the same object
 
 You can inspect it:
 
-``` python
+```python
 add_item.__defaults__
 ```
 
 The stored list is reused every time.
 
-------------------------------------------------------------------------
+#### Correct Solution
 
-## Correct Solution
-
-``` python
+```python
 def add_item_correct(lst=None):
     if lst is None:
         lst = []
@@ -184,23 +180,18 @@ def add_item_correct(lst=None):
     return lst
 ```
 
-------------------------------------------------------------------------
+#### Why This Fix Works
 
-## Why This Fix Works
+- `None` is immutable and safe to reuse
+- A new list is created inside the function at runtime
+- Each call gets a fresh list
+- No shared mutable state
 
--   `None` is immutable and safe to reuse.
--   A new list is created inside the function at runtime.
--   Each call gets a fresh list.
--   No shared mutable state.
+#### Interview-Ready Answer
 
-------------------------------------------------------------------------
+> "Mutable default arguments persist across calls because they are evaluated once at definition time. Using `None` ensures a new object is created at runtime, preventing unintended shared state."
 
-## Interview-Ready Answer
-
-> Mutable default arguments persist across calls because they are
-> evaluated once at definition time. Using `None` ensures a new object
-> is created at runtime, preventing unintended shared state.
-
+---
 
 # 2. TRICKY CONCEPTS - DEEP DIVE
 
@@ -240,67 +231,105 @@ print(deep)      # [1, 2, [3, 4, 99, 100], 5, 6, 7] - Only this changes
 
 ### Visual Explanation
 
+**Shallow Copy:**
+
 ```
-Shallow Copy:
-original = [[1, 2], [3, 4]]
-shallow = original.copy()
+Given:
+    original = [[1, 2], [3, 4]]
+    shallow = original.copy()
 
-Memory layout:
-original -> [ref1, ref2]
-shallow  -> [ref1, ref2]  (same references!)
-             |     |
-             v     v
-           [1,2] [3,4]
+Memory Layout:
+    
+    original ──┐
+               ├──> [ref1, ref2]
+    shallow ───┘        │    │
+                        │    │
+                        ▼    ▼
+                     [1,2] [3,4]
+    
+    (Both point to SAME inner lists!)
+```
 
-Deep Copy:
-deep = copy.deepcopy(original)
+**Deep Copy:**
 
-Memory layout:
-original -> [ref1, ref2]
-             |     |
-             v     v
-           [1,2] [3,4]
+```
+Given:
+    original = [[1, 2], [3, 4]]
+    deep = copy.deepcopy(original)
 
-deep     -> [ref3, ref4]
-             |     |
-             v     v
-           [1,2] [3,4]  (completely separate!)
+Memory Layout:
+    
+    original ──> [ref1, ref2]
+                   │    │
+                   ▼    ▼
+                 [1,2] [3,4]
+    
+    deep ──────> [ref3, ref4]
+                   │    │
+                   ▼    ▼
+                 [1,2] [3,4]
+    
+    (Completely separate objects!)
 ```
 
 ### Interview Questions on Copying
 
+#### Q1: What will this print?
+
 ```python
-# Q1: What will this print?
 a = [1, 2, 3]
 b = a
 c = a.copy()
 d = a[:]
 
 a.append(4)
-print(b)  # [1, 2, 3, 4] - reference to same list
-print(c)  # [1, 2, 3] - shallow copy
-print(d)  # [1, 2, 3] - shallow copy (slicing creates new list)
+print(b)  # ?
+print(c)  # ?
+print(d)  # ?
 
-# Q2: What about nested structures?
+# Answer:
+# b: [1, 2, 3, 4] - reference to same list
+# c: [1, 2, 3] - shallow copy
+# d: [1, 2, 3] - shallow copy (slicing creates new list)
+```
+
+#### Q2: What about nested structures?
+
+```python
 original = [[1, 2], [3, 4]]
 copy1 = original.copy()
 copy2 = copy.deepcopy(original)
 
 original[0].append(99)
-print(copy1)  # [[1, 2, 99], [3, 4]] - affected!
-print(copy2)  # [[1, 2], [3, 4]] - not affected
+print(copy1)  # ?
+print(copy2)  # ?
 
-# Q3: Tricky tuple question
+# Answer:
+# copy1: [[1, 2, 99], [3, 4]] - affected!
+# copy2: [[1, 2], [3, 4]] - not affected
+```
+
+#### Q3: Tricky tuple question
+
+```python
+import copy
+
 t1 = ([1, 2], 3)
 t2 = t1  # reference
 t3 = copy.copy(t1)  # shallow copy
 t4 = copy.deepcopy(t1)  # deep copy
 
 t1[0].append(99)
-print(t1)  # ([1, 2, 99], 3)
-print(t2)  # ([1, 2, 99], 3) - reference
-print(t3)  # ([1, 2, 99], 3) - shallow copy, list is referenced!
-print(t4)  # ([1, 2], 3) - deep copy, completely separate
+print(t1)  # ?
+print(t2)  # ?
+print(t3)  # ?
+print(t4)  # ?
+
+# Answer:
+# t1: ([1, 2, 99], 3)
+# t2: ([1, 2, 99], 3) - reference
+# t3: ([1, 2, 99], 3) - shallow copy, list is referenced!
+# t4: ([1, 2], 3) - deep copy, completely separate
 ```
 
 ---
@@ -321,16 +350,27 @@ print(t)  # ([1, 2, 99], 3)
 
 # Why? The tuple is still immutable (references don't change)
 # But the LIST inside is mutable!
+```
 
-# Visual:
-# t -> (ref_to_list, 3)
-#       |
-#       v
-#      [1, 2]  <- This can change
-#
-# The reference (ref_to_list) cannot change, but the list it points to can!
+**Visual Explanation:**
 
-# Interview Question:
+```
+Tuple: t = ([1, 2], 3)
+
+Memory Layout:
+    
+    t ──> (ref_to_list, 3)
+            │
+            ▼
+          [1, 2]  ← This list can change!
+    
+The reference itself cannot change, but the 
+object it points to can be modified.
+```
+
+**Interview Question:**
+
+```python
 t = (1, 2, 3)
 # Can you modify this tuple?
 # Answer: No, but you can create a new tuple
@@ -369,24 +409,34 @@ shopping_list.append("bread")
 
 ### Tricky Tuple Questions
 
+#### Q1: Single element tuple
+
 ```python
-# Q1: Single element tuple
 t1 = (1)      # This is an int!
 t2 = (1,)     # This is a tuple
 print(type(t1))  # <class 'int'>
 print(type(t2))  # <class 'tuple'>
+```
 
-# Q2: Tuple unpacking
+#### Q2: Tuple unpacking
+
+```python
 a, b = 1, 2  # Creates tuple (1, 2) then unpacks
 a, b = b, a  # Swap in one line! Creates (b, a) then unpacks
+```
 
-# Q3: * operator
+#### Q3: Star operator
+
+```python
 a, *b, c = [1, 2, 3, 4, 5]
 print(a)  # 1
 print(b)  # [2, 3, 4] - gets the "rest"
 print(c)  # 5
+```
 
-# Q4: Tuple with one mutable element
+#### Q4: Tuple with one mutable element
+
+```python
 t = ([1, 2],)
 # Can we hash this tuple? (for use as dict key)
 # hash(t)  # TypeError: unhashable type: 'list'
