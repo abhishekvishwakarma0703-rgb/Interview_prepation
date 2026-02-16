@@ -138,6 +138,19 @@ def add_item_correct(lst=None):
 ```
 
 ---
+# Mutable Default Argument Bug — Short & Clear Explanation
+
+## The Problem
+
+```python
+def add_item(lst=[]):
+    lst.append(1)
+    return lst
+
+print(add_item())  # [1]
+print(add_item())  # [1, 1]
+print(add_item())  # [1, 1, 1]
+
 
 # 2. TRICKY CONCEPTS - DEEP DIVE
 
