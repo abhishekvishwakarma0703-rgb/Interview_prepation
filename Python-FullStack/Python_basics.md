@@ -1094,7 +1094,7 @@ print(times_5(10))  # 50
 
 # Each closure maintains its own 'n'
 ```
-
+This happens because Python closures use late binding. The lambda captures the variable i, not its value during each loop iteration. After the loop finishes, i equals 4, so all lambdas return 4. Using a default argument like lambda x=i: x forces early binding and fixes the issue.
 ## Question 7: Late Binding in Loops
 
 ```python
