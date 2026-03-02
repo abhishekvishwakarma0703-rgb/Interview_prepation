@@ -758,7 +758,43 @@ def print_value(x):
 
 functions = [partial(print_value, i) for i in range(5)]
 ```
+Why This Happens
 
+Python closures use late binding.
+
+The lambda captures the variable i, not its value at that time.
+
+The loop finishes first.
+
+Final value of i is 4.
+
+When each lambda is executed, it looks up i → which is now 4.
+
+So all functions return 4.
+
+Key idea:
+Closures capture reference to variable, not snapshot of value.
+
+Fix – Early Binding Using Default Argument
+functions = []
+for i in range(5):
+    functions.append(lambda x=i: x)
+
+for f in functions:
+    print(f())
+
+Output:
+
+0 1 2 3 4
+Why This Works
+
+Default arguments are evaluated at function definition time.
+
+x=i stores the current value of i during each iteration.
+
+Each lambda now has its own independent value.
+
+This forces early binding.
 ### Mutability in Class Attributes
 
 ```python
